@@ -1,0 +1,6 @@
+[server]
+bind_addr = ":8080"
+
+[store]
+database_url = "host=db port=5432 user=script-server-user password=qwerty dbname=script-server sslmode=disable"
+path_migration = "file://migrations"
