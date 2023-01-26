@@ -1,8 +1,8 @@
 package config
 
 import (
-	"os"
 	"errors"
+	"os"
 
 	"github.com/pelletier/go-toml"
 )
@@ -13,13 +13,13 @@ var (
 
 const (
 	BindAddr = "server.bind_addr"
-	
-	DatabaseURL = "store.database_url"
+
+	DatabaseURL   = "store.database_url"
 	PathMigration = "store.path_migration"
 )
 
-func GetValue(key string) (interface{}, error){
-	configPath, ok := os.LookupEnv("config.toml")
+func GetValue(key string) (interface{}, error) {
+	configPath, ok := os.LookupEnv("PATH_CONFIG")
 	if !ok {
 		return nil, noKeyEnvironmentVariables
 	}

@@ -3,16 +3,23 @@ package checkerserver
 import (
 	"log"
 
+	"github.com/AlyonaAg/script-checker-server/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
-type Implementation struct {
-	router    *gin.Engine
+type repo interface {
+	CreateScript(script model.Script) (int64, error)
 }
 
-func NewCheckerServer() *Implementation{
+type Implementation struct {
+	router *gin.Engine
+	repo   repo
+}
+
+func NewCheckerServer(repo repo) *Implementation {
 	return &Implementation{
-		router:    gin.Default(),
+		router: gin.Default(),
+		repo:   repo,
 	}
 }
 
@@ -21,13 +28,9 @@ func (i *Implementation) Start() error {
 
 	log.Print("starting server.")
 
-	return i.router.Run()
+	return i.router.Run(":4567")
 }
 
 func (i *Implementation) configureRouter() {
 	i.router.POST("v1/scripts", i.CreateScript())
-}
-
-type successResponse struct {
-	Success bool `json:"success"`
 }
