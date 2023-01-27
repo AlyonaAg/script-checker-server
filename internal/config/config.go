@@ -12,10 +12,12 @@ var (
 )
 
 const (
-	BindAddr = "server.bind_addr"
-
-	DatabaseURL   = "store.database_url"
-	PathMigration = "store.path_migration"
+	BindAddr            = "server.bind_addr"
+	DatabaseURL         = "store.database_url"
+	OriginalScriptTopic = "kafka.original_script_topic"
+	DeobfScriptTopic    = "kafka.deobf_script_topic"
+	Brokers             = "kafka.brokers"
+	RetryMax            = "kafka.retry_max"
 )
 
 func GetValue(key string) (interface{}, error) {

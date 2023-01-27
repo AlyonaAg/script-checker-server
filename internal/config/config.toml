@@ -3,3 +3,9 @@ bind_addr = ":4567"
 
 [store]
 database_url = "host=localhost port=5432 dbname=sqripts user=postgres password=qwerty sslmode=disable"
+
+[kafka]
+original_script_topic = "original_script_topic"
+deobf_script_topic = "deobf_script_topic"
+brokers = "localhost:9092"
+retry_max = 1
