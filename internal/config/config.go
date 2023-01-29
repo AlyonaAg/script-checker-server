@@ -15,7 +15,7 @@ const (
 	BindAddr            = "server.bind_addr"
 	DatabaseURL         = "store.database_url"
 	OriginalScriptTopic = "kafka.original_script_topic"
-	DeobfScriptTopic    = "kafka.deobf_script_topic"
+	ResultTopic         = "kafka.result_topic"
 	Brokers             = "kafka.brokers"
 	RetryMax            = "kafka.retry_max"
 )

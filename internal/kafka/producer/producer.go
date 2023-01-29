@@ -1,6 +1,8 @@
 package producer
 
 import (
+	"log"
+
 	"github.com/Shopify/sarama"
 )
 
@@ -39,6 +41,7 @@ func (p *Producer) Send(data []byte) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("send msg: %s\n", data)
 
 	return nil
 }

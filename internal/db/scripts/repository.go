@@ -10,6 +10,9 @@ import (
 
 type Repository interface {
 	CreateScript(script model.Script) (int64, error)
+	GetScript(id int64) (*model.Script, error)
+	UpdateResultByID(scriptID int64, result bool) error
+	UpdateDangerPercentByID(scriptID int64, dangerPercent float64) error
 }
 
 type repo struct {
@@ -25,12 +28,33 @@ func (r *repo) CreateScript(script model.Script) (int64, error) {
 	return script.ID, nil
 }
 
-func (r *repo) UpdateScript(scriptID int64, deobfScript string) error {
+func (r *repo) UpdateResultByID(scriptID int64, result bool) error {
 	if _, err := r.db.Exec(
-		`UPDATE "scripts" SET deobf_script = $1 WHERE id = $2`, deobfScript, scriptID); err != nil {
+		`UPDATE "scripts" SET result = $1 WHERE id = $2`, result, scriptID); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (r *repo) UpdateDangerPercentByID(scriptID int64, dangerPercent float64) error {
+	if _, err := r.db.Exec(
+		`UPDATE "scripts" SET danger_percent = $1 WHERE id = $2`, dangerPercent, scriptID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *repo) GetScript(id int64) (*model.Script, error) {
+	var script = &model.Script{}
+	if err := r.db.QueryRow(`SELECT id, url, original_script FROM "scripts" WHERE id = $1`, id).Scan(
+		&script.ID,
+		&script.URL,
+		&script.Script,
+	); err != nil {
+		return nil, err
+	}
+
+	return script, nil
 }
 
 func (r *repo) ListScripts(filter ListScriptsFilter) (model.Scripts, error) {

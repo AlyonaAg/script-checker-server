@@ -3,8 +3,11 @@
 CREATE TABLE scripts (
     id SERIAL PRIMARY KEY,
     url TEXT,
-    original_script TEXT UNIQUE NOT NULL,
-    deobf_script TEXT
+    original_script TEXT NOT NULL,
+    result BOOLEAN,
+    danger_percent FLOAT
+
+    UNIQUE (url, original_script)
 );
 -- +goose StatementEnd
 

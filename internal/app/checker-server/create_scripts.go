@@ -19,6 +19,9 @@ func (i *Implementation) CreateScript() gin.HandlerFunc {
 		}
 
 		for index, s := range r.Scripts {
+			if len(s) == 0 {
+				continue
+			}
 			id, err := i.repo.CreateScript(model.Script{
 				URL:    r.URL,
 				Script: s,
