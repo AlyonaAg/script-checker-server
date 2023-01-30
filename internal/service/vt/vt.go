@@ -68,18 +68,19 @@ func NewVirusTotal(apikey string) (*VirusTotal, error) {
 	return vt, nil
 }
 
-func (vt *VirusTotal) GetDengerPercent(path string) (float64, error) {
-	var res float64
+func (vt *VirusTotal) GetDengerPercent(path string) (float64, string, error) {
+	var percent float64
+	var vtDanger string
 
 	file, err := os.Open(path)
 	if err != nil {
-		return res, err
+		return percent, vtDanger, err
 	}
 	defer file.Close()
 
 	scanResp, err := vt.Scan(path, file)
 	if err != nil {
-		return res, err
+		return percent, vtDanger, err
 	}
 
 	var status string
@@ -90,14 +91,16 @@ func (vt *VirusTotal) GetDengerPercent(path string) (float64, error) {
 
 		reposrtResp, err = vt.Report(scanResp.Md5)
 		if err != nil {
-			return res, err
+			return percent, vtDanger, err
 		}
 		status = reposrtResp.Message
 		time.Sleep(5 * time.Second)
 	}
 	fmt.Printf("[%s] path totalvirus result: %d/%d\n", path, reposrtResp.Positives, reposrtResp.Total)
 
-	return float64(reposrtResp.Positives) / float64(reposrtResp.Total), nil
+	return float64(reposrtResp.Positives) / float64(reposrtResp.Total),
+		fmt.Sprintf("%d/%d", reposrtResp.Positives, reposrtResp.Total),
+		nil
 }
 
 func (vt *VirusTotal) Report(resource string) (*ReportResponse, error) {

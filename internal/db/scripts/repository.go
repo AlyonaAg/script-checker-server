@@ -2,6 +2,7 @@ package scriptsdb
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/AlyonaAg/script-checker-server/internal/config"
 	"github.com/AlyonaAg/script-checker-server/internal/model"
@@ -12,7 +13,8 @@ type Repository interface {
 	CreateScript(script model.Script) (int64, error)
 	GetScript(id int64) (*model.Script, error)
 	UpdateResultByID(scriptID int64, result bool) error
-	UpdateDangerPercentByID(scriptID int64, dangerPercent float64) error
+	UpdateDangerByID(scriptID int64, dangerPercent float64, vtDanger string) error
+	ListScripts(filter model.ListScriptsFilter) (model.Scripts, error)
 }
 
 type repo struct {
@@ -36,9 +38,9 @@ func (r *repo) UpdateResultByID(scriptID int64, result bool) error {
 	return nil
 }
 
-func (r *repo) UpdateDangerPercentByID(scriptID int64, dangerPercent float64) error {
+func (r *repo) UpdateDangerByID(scriptID int64, dangerPercent float64, vtDanger string) error {
 	if _, err := r.db.Exec(
-		`UPDATE "scripts" SET danger_percent = $1 WHERE id = $2`, dangerPercent, scriptID); err != nil {
+		`UPDATE "scripts" SET danger_percent = $1, virus_total = $2 WHERE id = $3`, dangerPercent, vtDanger, scriptID); err != nil {
 		return err
 	}
 	return nil
@@ -57,8 +59,10 @@ func (r *repo) GetScript(id int64) (*model.Script, error) {
 	return script, nil
 }
 
-func (r *repo) ListScripts(filter ListScriptsFilter) (model.Scripts, error) {
-	rows, err := r.db.Query(`SELECT id, url, original_script FROM "scripts" LIMIT $1 OFFSET $2`,
+func (r *repo) ListScripts(filter model.ListScriptsFilter) (model.Scripts, error) {
+	fmt.Println(filter)
+
+	rows, err := r.db.Query(`SELECT id, url, original_script, result, danger_percent, virus_total FROM "scripts" LIMIT $1 OFFSET $2`,
 		filter.Limit, filter.Page)
 
 	if err != nil {
@@ -70,12 +74,16 @@ func (r *repo) ListScripts(filter ListScriptsFilter) (model.Scripts, error) {
 	for rows.Next() {
 		s := model.Script{}
 		if err := rows.Scan(
-			s.ID,
-			s.URL,
-			s.Script,
+			&s.ID,
+			&s.URL,
+			&s.Script,
+			&s.Result,
+			&s.DangerPercent,
+			&s.VirusTotal,
 		); err != nil {
 			continue
 		}
+		fmt.Println(s)
 
 		scripts = append(scripts, &s)
 	}

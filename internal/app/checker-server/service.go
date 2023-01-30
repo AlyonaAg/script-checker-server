@@ -10,6 +10,7 @@ import (
 
 type repo interface {
 	CreateScript(script model.Script) (int64, error)
+	ListScripts(filter model.ListScriptsFilter) (model.Scripts, error)
 }
 
 type Implementation struct {
@@ -36,4 +37,5 @@ func (i *Implementation) Start() error {
 
 func (i *Implementation) configureRouter() {
 	i.router.POST("v1/scripts", i.CreateScript())
+	i.router.GET("v1/scripts", i.ListScripts())
 }

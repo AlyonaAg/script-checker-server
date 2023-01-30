@@ -5,7 +5,8 @@ CREATE TABLE scripts (
     url TEXT,
     original_script TEXT NOT NULL,
     result BOOLEAN,
-    danger_percent FLOAT
+    danger_percent FLOAT,
+    virus_total TEXT,
 
     UNIQUE (url, original_script)
 );

@@ -15,11 +15,11 @@ import (
 type repo interface {
 	GetScript(id int64) (*model.Script, error)
 	UpdateResultByID(scriptID int64, result bool) error
-	UpdateDangerPercentByID(scriptID int64, dangerPercent float64) error
+	UpdateDangerByID(scriptID int64, dangerPercent float64, vtDanger string) error
 }
 
 type vt interface {
-	GetDengerPercent(path string) (float64, error)
+	GetDengerPercent(path string) (float64, string, error)
 }
 
 type Consumer struct {
@@ -117,14 +117,14 @@ func (c *Consumer) prepareMsg(msg []byte) {
 	}
 
 	// virustotal
-	danger, err := c.vt.GetDengerPercent(path)
+	danger, vtDanger, err := c.vt.GetDengerPercent(path)
 	if err != nil {
 		log.Printf("prepareMsg: GetDengerPercent err=%v\n", err)
 		return
 	}
 
-	if err := c.repo.UpdateDangerPercentByID(script.ID, danger); err != nil {
-		log.Printf("prepareMsg: UpdateDangerPercentByID err=%v\n", err)
+	if err := c.repo.UpdateDangerByID(script.ID, danger, vtDanger); err != nil {
+		log.Printf("prepareMsg: UpdateDangerByID err=%v\n", err)
 		return
 	}
 
