@@ -108,6 +108,7 @@ func (c *Consumer) prepareMsg(msg []byte) {
 		log.Printf("prepareMsg: Create err=%v\n", err)
 		return
 	}
+	defer os.Remove(path)
 
 	_, err = f.Write(body)
 	if err != nil {

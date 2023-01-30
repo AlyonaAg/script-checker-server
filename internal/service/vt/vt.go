@@ -73,23 +73,29 @@ func (vt *VirusTotal) GetDengerPercent(path string) (float64, error) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		return res, nil
+		return res, err
 	}
 	defer file.Close()
 
 	scanResp, err := vt.Scan(path, file)
+	if err != nil {
+		return res, err
+	}
 
 	var status string
 	var reposrtResp *ReportResponse
 
 	for status != finishedStatus {
+		fmt.Printf("[%s] status: %s\n", path, status)
+
 		reposrtResp, err = vt.Report(scanResp.Md5)
 		if err != nil {
-			return res, nil
+			return res, err
 		}
 		status = reposrtResp.Message
 		time.Sleep(5 * time.Second)
 	}
+	fmt.Printf("[%s] path totalvirus result: %d/%d\n", path, reposrtResp.Positives, reposrtResp.Total)
 
 	return float64(reposrtResp.Positives) / float64(reposrtResp.Total), nil
 }
@@ -108,9 +114,11 @@ func (vt *VirusTotal) Report(resource string) (*ReportResponse, error) {
 	defer resp.Body.Close()
 
 	contents, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return nil, err
+	}
+	if len(contents) == 0 {
+		return &ReportResponse{}, nil
 	}
 
 	var reportResponse = &ReportResponse{}
