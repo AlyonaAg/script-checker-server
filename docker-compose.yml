@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_PASSWORD: qwerty
       POSTGRES_USER: postgres
-      POSTGRES_DB: script-checker
+      POSTGRES_DB: bot_detector
     ports:
       - 5432:5432
   

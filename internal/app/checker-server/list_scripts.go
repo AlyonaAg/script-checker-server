@@ -18,8 +18,7 @@ func (i *Implementation) ListScripts() gin.HandlerFunc {
 		}
 		page, err := strconv.Atoi(c.Query("page"))
 		if err != nil {
-
-			page = 0
+			page = 1
 		}
 
 		page = (page - 1) * limit

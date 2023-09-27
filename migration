@@ -1,1 +1,1 @@
-goose -dir ./migrations/ postgres "host=localhost port=5432 dbname=sqripts user=postgres password=qwerty sslmode=disable" status -v
+goose -dir ./migrations/ postgres "host=localhost port=5432 dbname=bot_detector user=postgres password=qwerty sslmode=disable" status -v
